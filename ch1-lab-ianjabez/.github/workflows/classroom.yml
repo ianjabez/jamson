@@ -1,0 +1,50 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: lab1
+      id: lab1
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: lab1
+        setup-command: ''
+        command: make lab1
+        timeout: 10
+        max-score: 33
+    - name: lab2
+      id: lab2
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: lab2
+        setup-command: ''
+        command: make lab2
+        timeout: 10
+        max-score: 33
+    - name: lab3
+      id: lab3
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: lab3
+        setup-command: ''
+        command: make lab3
+        timeout: 10
+        max-score: 34
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        LAB1_RESULTS: "${{steps.lab1.outputs.result}}"
+        LAB2_RESULTS: "${{steps.lab2.outputs.result}}"
+        LAB3_RESULTS: "${{steps.lab3.outputs.result}}"
+      with:
+        runners: lab1,lab2,lab3
